@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Downtime Marathon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* Base Resets & Performance Constraints */
+        body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+        }
+
+        .font-digital { font-family: 'Share Tech Mono', monospace; }
+
+        /* Option Button Animations */
+        .option-btn {
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+        .option-btn:active:not(:disabled) { transform: scale(0.97); }
+        
+        .correct-answer {
+            background-color: #10b981 !important; /* Emerald 500 */
+            border-color: #047857 !important;
+            color: white !important;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+        
+        .wrong-answer {
+            background-color: #ef4444 !important; /* Red 500 */
+            border-color: #b91c1c !important;
+            color: white !important;
+            opacity: 0.5;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+            40%, 60% { transform: translate3d(8px, 0, 0); }
+        }
+
+        /* Penalty Float Animation */
+        .penalty-anim {
+            animation: floatUpFade 1s ease-out forwards;
+            position: absolute;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes floatUpFade {
+            0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            50% { transform: translate(-50%, -30px) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -60px) scale(1); }
+        }
+
+        /* Runner Progress Bar */
+        .runner-icon {
+            transition: left 0.3s ease-out;
+        }
+
+        /* Paper Document Styling */
+        .paper-document {
+            aspect-ratio: 8.5 / 11;
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+                linear-gradient(#eee .1em, transparent .1em);
+            background-size: 100% 1.2em;
+            box-shadow: 
+                -2px 4px 15px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        /* Scrollbar hide for cleaner UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="w-screen h-screen overflow-hidden touch-none select-none text-slate-100 flex flex-col justify-center items-center p-2 md:p-4">
+
+    <!-- Global App Container -->
+    <div id="app" class="w-full h-full max-w-5xl max-h-[900px] relative flex flex-col bg-slate-900 shadow-2xl rounded-2xl border border-slate-700">
+        
+        <!-- ========================================== -->
+        <!-- PHASE 1: LOGIN                             -->
+        <!-- ========================================== -->
+        <div id="phase-login" class="flex flex-col h-full p-6 relative z-10 max-w-md mx-auto w-full overflow-y-auto no-scrollbar">
+            <div class="flex-1 flex flex-col justify-center items-center text-center mt-8">
+                <div class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block shadow-[0_0_10px_rgba(37,99,235,0.5)]">BCP Skills Fair</div>
+                <h1 class="text-4xl font-extrabold tracking-tight mb-2 text-white">DOWNTIME<br><span class="text-blue-400">RELAY</span></h1>
+                <p class="text-slate-400 text-sm mb-8">Enter your 7-digit Employee ID</p>
+
+                <!-- Display -->
+                <div class="bg-slate-800 border-2 border-slate-700 w-full rounded-xl p-4 mb-2 flex items-center justify-center shadow-inner relative">
+                    <span id="id-display" class="font-digital text-4xl tracking-[0.2em] h-10 flex items-center text-slate-600">_______</span>
+                </div>
+                <div id="id-error" class="text-red-400 text-xs h-4 mb-4 opacity-0 transition-opacity">Must be exactly 7 digits.</div>
+
+                <!-- Numpad -->
+                <div class="grid grid-cols-3 gap-3 w-full pb-8">
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="1">1</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="2">2</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="3">3</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="4">4</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="5">5</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="6">6</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="7">7</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="8">8</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="9">9</button>
+                    <button class="numpad-btn bg-red-900/30 text-red-400 border border-red-900/50 rounded-xl p-4 text-sm font-bold shadow active:scale-95" data-val="clear">CLR</button>
+                    <button class="numpad-btn bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-xl p-4 text-2xl font-semibold shadow active:scale-95" data-val="0">0</button>
+                    <button class="numpad-btn bg-blue-900/30 text-blue-400 border border-blue-900/50 rounded-xl p-4 text-xl font-bold shadow active:scale-95 flex justify-center items-center" data-val="del">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <button id="btn-login-next" class="w-full bg-slate-700 text-slate-500 font-bold py-4 rounded-xl text-lg shadow-lg transition-all duration-200 mt-auto pointer-events-none mb-4 shrink-0">
+                Proceed to Starting Line
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PHASE 2: INSTRUCTIONS                      -->
+        <!-- ========================================== -->
+        <div id="phase-instructions" class="hidden flex-col h-full p-6 relative z-20 bg-slate-900 max-w-xl mx-auto w-full overflow-y-auto no-scrollbar">
+            <div class="flex-1 flex flex-col justify-center pb-4 mt-8">
+                <div class="flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mx-auto mb-6 shadow-[0_0_20px_rgba(59,130,246,0.6)]">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-extrabold text-center text-white mb-6">Race Rules</h2>
+                
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6 text-slate-300 text-base leading-relaxed">
+                    <p class="text-center font-semibold text-white mb-2 text-lg">Match the Paper to the EMR!</p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4 mt-1">📄</span>
+                            <span>A <strong>paper BCP document</strong> will appear on the left. Read the clue on the right.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4 mt-1">💻</span>
+                            <span>Select the matching <strong>EMR System Screen</strong> from the choices provided.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4 mt-1">⚠️</span>
+                            <span><strong class="text-red-400">Watch your step!</strong> Every wrong guess adds a <strong class="text-red-400">+3 second penalty</strong> to your marathon time. You cannot move forward until you find the correct answer.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4 mt-1">🏁</span>
+                            <span>Complete all <strong class="text-emerald-400">10 stations</strong> as fast as possible to cross the finish line and record your score on the leaderboard.</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <p class="text-center font-bold text-orange-400 mt-8 animate-pulse uppercase tracking-widest text-sm">The timer starts immediately</p>
+            </div>
+            
+            <button id="btn-start-game" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl text-xl shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] active:scale-95 transition-all mt-auto mb-4 shrink-0">
+                Start the Relay!
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PHASE 3: GAME / QUIZ                       -->
+        <!-- ========================================== -->
+        <div id="phase-game" class="hidden flex-col h-full relative z-30 bg-slate-900 rounded-2xl overflow-hidden">
+            
+            <!-- Header: Timer & Progress -->
+            <div class="bg-slate-800 border-b border-slate-700 p-4 shadow-md z-10 shrink-0">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="text-slate-400 text-sm font-bold tracking-wider uppercase">Distance <span id="q-counter" class="text-blue-400">1/10</span></div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div id="penalty-tracker" class="hidden md:flex items-center text-xs text-red-400 bg-red-900/20 px-2 py-1 rounded border border-red-900/50">
+                            Penalties: <span id="penalty-count-display" class="font-bold ml-1">0</span>
+                        </div>
+                        <div class="flex items-center bg-black/50 px-3 py-1.5 rounded-lg border border-slate-700 shadow-inner">
+                            <svg class="w-4 h-4 text-orange-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span id="timer-display" class="font-digital text-2xl text-white tracking-wider">00:00.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Marathon Progress Bar -->
+                <div class="relative w-full h-3 bg-slate-700 rounded-full mt-2">
+                    <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-emerald-400 rounded-full transition-all duration-300 ease-out" id="progress-bar-fill" style="width: 0%;"></div>
+                    <!-- Runner Icon -->
+                    <div id="runner-icon" class="runner-icon absolute top-1/2 -translate-y-1/2 -ml-3 w-6 h-6 bg-slate-800 border-2 border-emerald-400 rounded-full flex items-center justify-center shadow-lg text-xs z-10" style="left: 0%;">
+                        🏃
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Body: SIDE-BY-SIDE LAYOUT -->
+            <div class="flex-1 flex flex-row p-4 gap-4 overflow-hidden relative" id="game-arena">
+                
+                <!-- Left Column: Portrait Paper Document -->
+                <div class="w-5/12 h-full flex items-center justify-center bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 shrink-0 relative">
+                    <!-- Physical Paper Placeholder (Strict 8.5/11 Aspect Ratio) -->
+                    <div class="paper-document max-h-full rounded-sm flex flex-col p-2 md:p-6 overflow-hidden w-full max-w-[400px]">
+                        
+                        <!-- Internal Badge -->
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-[8px] md:text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest shadow">Downtime Form</div>
+
+                        <!-- User Document Image will be injected here -->
+                        <img id="doc-image" src="" alt="Scanned BCP Document" class="relative z-10 w-full h-full object-contain mix-blend-multiply opacity-90 transition-opacity duration-300">
+                        
+                        <!-- Fallback visual if no image: simulated text lines -->
+                        <div id="doc-placeholder-lines" class="absolute inset-0 flex flex-col gap-3 p-6 pt-12 pointer-events-none opacity-20 hidden">
+                            <div class="w-1/2 h-4 bg-black rounded"></div>
+                            <div class="w-full h-1 bg-black mt-2"></div>
+                            <div class="w-full h-2 bg-black rounded mt-4"></div>
+                            <div class="w-11/12 h-2 bg-black rounded"></div>
+                            <div class="w-full h-2 bg-black rounded"></div>
+                            <div class="w-4/5 h-2 bg-black rounded"></div>
+                            <div class="w-full h-12 border-2 border-black mt-auto"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Clue and Options Grid -->
+                <div class="w-7/12 h-full flex flex-col relative">
+                    
+                    <!-- Clue Text Box -->
+                    <div class="bg-blue-900/20 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg shadow-sm shrink-0">
+                        <p class="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Clue
+                        </p>
+                        <h3 id="clue-text" class="text-base md:text-lg font-semibold text-slate-100 leading-snug">
+                            <!-- Injected by JS -->
+                        </h3>
+                    </div>
+
+                    <!-- Multiple Choice Options -->
+                    <div class="flex justify-between items-end mb-2 shrink-0">
+                        <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Select matching EMR screen:</p>
+                    </div>
+
+                    <div id="options-container" class="flex-1 grid grid-cols-1 gap-3 overflow-y-auto pb-4 content-end no-scrollbar">
+                        <!-- Buttons injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PHASE 4: FINISH LINE & LEADERBOARD         -->
+        <!-- ========================================== -->
+        <div id="phase-finish" class="hidden flex-col h-full p-6 items-center relative z-40 bg-slate-900 overflow-y-auto no-scrollbar">
+            
+            <div class="text-center mb-6 mt-4 shrink-0">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-full mb-2 shadow-[0_0_40px_rgba(16,185,129,0.4)] border-4 border-emerald-400">
+                    <span class="text-3xl">🏆</span>
+                </div>
+                <h2 class="text-2xl font-extrabold text-white mb-1 uppercase tracking-tight">Finish Line!</h2>
+                <p class="text-slate-400 text-sm">Runner ID: <span id="final-id" class="font-mono text-blue-400 font-bold"></span></p>
+            </div>
+
+            <!-- Dashboard Layout (Horizontal Desktop, Stacked Mobile) -->
+            <div class="flex flex-col lg:flex-row gap-6 w-full max-w-4xl mb-6">
+                
+                <!-- Left Side: Player Stats & QR -->
+                <div class="flex flex-col gap-4 w-full lg:w-1/3 shrink-0">
+                    <!-- Final Time -->
+                    <div class="bg-slate-800 border-2 border-emerald-500/50 rounded-2xl p-5 text-center shadow-lg relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-blue-500"></div>
+                        <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Final Race Time</div>
+                        <div id="final-time" class="font-digital text-4xl text-emerald-400 mt-1 drop-shadow-md">00:00.0</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Base Time -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-center">
+                            <div class="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Base Time</div>
+                            <div id="final-base-time" class="font-digital text-lg text-slate-200">00:00.0</div>
+                        </div>
+
+                        <!-- Penalties -->
+                        <div class="bg-red-900/20 border border-red-900/50 rounded-xl p-3 text-center">
+                            <div class="text-[10px] text-red-400 uppercase tracking-wider mb-1">Penalties</div>
+                            <div class="font-digital text-lg text-red-400">
+                                +<span id="final-penalty-time">0</span>s
+                            </div>
+                            <div class="text-[9px] text-red-500/70 mt-1">(<span id="final-penalty-count">0</span> errs)</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-xl shadow-lg mx-auto w-full max-w-[160px] mt-2 hidden md:block">
+                        <p class="text-slate-800 text-[9px] text-center font-bold mb-2 uppercase tracking-wider">Scan for BCP Toolkit</p>
+                        <img id="qr-code" src="" alt="BCP QR Code" class="w-full aspect-square mx-auto rounded border border-slate-200">
+                    </div>
+                </div>
+
+                <!-- Right Side: Leaderboard -->
+                <div class="w-full lg:w-2/3 bg-slate-800 rounded-2xl border border-slate-700 flex flex-col overflow-hidden shadow-xl min-h-[300px]">
+                    <div class="bg-slate-700/50 py-3 px-4 border-b border-slate-700 flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                            Top 10 Fastest Associates
+                        </h3>
+                    </div>
+                    
+                    <div class="px-4 py-2 bg-slate-800/80 border-b border-slate-700/50 grid grid-cols-12 gap-2 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                        <div class="col-span-2 text-center">Rank</div>
+                        <div class="col-span-5">Employee ID</div>
+                        <div class="col-span-5 text-right">Time</div>
+                    </div>
+
+                    <div id="leaderboard-container" class="flex-1 overflow-y-auto p-2 space-y-1">
+                        <!-- Loading Indicator -->
+                        <div id="leaderboard-loading" class="flex flex-col items-center justify-center h-32 text-slate-400">
+                            <svg class="animate-spin h-6 w-6 text-blue-500 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span class="text-xs">Updating Leaderboard...</span>
+                        </div>
+                        <!-- Leaderboard Rows injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-restart" class="w-full max-w-md bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg active:scale-95 transition-all mt-auto mb-4 shrink-0">
+                Next Runner Ready
+            </button>
+        </div>
+
+    </div>
+
+    <!-- MAIN SCRIPT (Module to support Firebase) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- FIREBASE INITIALIZATION ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'downtime-relay-local';
+        
+        let app, auth, db, isAuthenticated = false;
+
+        async function initFirebase() {
+            try {
+                if (Object.keys(firebaseConfig).length > 0) {
+                    app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    isAuthenticated = true;
+                    console.log("Firebase Authenticated.");
+                }
+            } catch (e) {
+                console.error("Firebase Init/Auth error:", e);
+                // Fallback UI handling if DB fails
+                const loader = document.getElementById('leaderboard-loading');
+                if(loader) loader.innerHTML = '<span class="text-red-400 text-xs">Cloud sync unavailable.</span>';
+            }
+        }
+        initFirebase(); // Start auth immediately
+
+        // --- QUESTION DATABASE (10 Items) ---
+        const ALL_QUESTIONS = [
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Manual\nTPR/BP+Chart",
+                clue: "Used at the bedside to track a patient's temperature, pulse, and blood pressure trends over time.",
+                options: ["Vital Signs Graphic Flowsheet", "Clinical Progress Notes", "e-MAR", "CPOE Order Entry"],
+                answer: 0
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+24H\nPaper+MAR",
+                clue: "Nurses use this to document the administration of scheduled and PRN medications during an outage.",
+                options: ["Pharmacy e-Dispense Queue", "e-MAR (Medication Admin Record)", "Nursing Shift Handover", "Electronic Prescription (e-Rx)"],
+                answer: 1
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Physician\nOrder+Sheet",
+                clue: "The carbon-copy form doctors use to write new interventions, diets, and treatments.",
+                options: ["CPOE (Computerized Provider Order Entry)", "Electronic Discharge Order", "PACS / RIS", "LIS / Lab Order Entry"],
+                answer: 0
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Lab\nRequisition",
+                clue: "Requires checking off specific blood panels (CBC, BMP) and attaching a patient sticker.",
+                options: ["Vital Signs Graphic Flowsheet", "PACS / RIS Radiology Request", "LIS (Laboratory Information System)", "Clinical Progress Notes"],
+                answer: 2
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Imaging\nRequest",
+                clue: "Must include clinical indications and pregnancy status before sending the patient to the X-ray department.",
+                options: ["PACS / RIS Radiology Request", "Pharmacy e-Dispense Queue", "e-MAR", "Electronic Discharge Order"],
+                answer: 0
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Physician\nProgress",
+                clue: "Where the attending doctor writes their daily SOAP note assessment of the patient.",
+                options: ["Nursing Shift Handover", "Clinical Progress Notes", "CPOE Order Entry", "Vital Signs Graphic Flowsheet"],
+                answer: 1
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Downtime\nRx+Pad",
+                clue: "A highly controlled, serialized pad used specifically to order take-home medications for patients.",
+                options: ["Electronic Prescription (e-Rx)", "e-MAR", "LIS (Laboratory Information System)", "CPOE Order Entry"],
+                answer: 0
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Pharmacy\nDispense",
+                clue: "The log used by pharmacists to track which medications have been prepared and sent to the floor.",
+                options: ["Clinical Progress Notes", "Electronic Discharge Order", "Pharmacy e-Dispense Queue", "PACS / RIS Radiology Request"],
+                answer: 2
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+SBAR\nHandover",
+                clue: "The structured template utilized during shift change to pass critical patient information to the next nurse.",
+                options: ["Vital Signs Graphic Flowsheet", "Nursing Shift Handover / Kardex", "LIS (Laboratory Information System)", "Electronic Prescription (e-Rx)"],
+                answer: 1
+            },
+            {
+                img: "https://placehold.co/425x550/ffffff/333333?text=Form:+Discharge\nClearance",
+                clue: "The final checklist requiring signatures from nursing, billing, and the physician before the patient leaves the hospital.",
+                options: ["e-MAR", "Pharmacy e-Dispense Queue", "Electronic Discharge Order", "CPOE Order Entry"],
+                answer: 2
+            }
+        ];
+
+        // --- APP STATE ---
+        const State = {
+            inputID: "",
+            timer: {
+                start: 0,
+                penaltySeconds: 0,
+                penaltyCount: 0,
+                currentDisplayMs: 0,
+                rafId: null,
+                running: false
+            },
+            quiz: {
+                questions: [],
+                currentIndex: 0,
+                isTransitioning: false
+            }
+        };
+
+        // --- DOM ELEMENTS ---
+        const UI = {
+            phases: {
+                login: document.getElementById('phase-login'),
+                instructions: document.getElementById('phase-instructions'),
+                game: document.getElementById('phase-game'),
+                finish: document.getElementById('phase-finish')
+            },
+            login: {
+                display: document.getElementById('id-display'),
+                error: document.getElementById('id-error'),
+                numpadBtns: document.querySelectorAll('.numpad-btn'),
+                nextBtn: document.getElementById('btn-login-next')
+            },
+            instructions: {
+                startBtn: document.getElementById('btn-start-game')
+            },
+            game: {
+                arena: document.getElementById('game-arena'),
+                timer: document.getElementById('timer-display'),
+                qCounter: document.getElementById('q-counter'),
+                progressBar: document.getElementById('progress-bar-fill'),
+                runnerIcon: document.getElementById('runner-icon'),
+                docImage: document.getElementById('doc-image'),
+                clueText: document.getElementById('clue-text'),
+                optionsContainer: document.getElementById('options-container'),
+                penaltyTracker: document.getElementById('penalty-count-display')
+            },
+            finish: {
+                finalId: document.getElementById('final-id'),
+                time: document.getElementById('final-time'),
+                baseTime: document.getElementById('final-base-time'),
+                penaltyTime: document.getElementById('final-penalty-time'),
+                penaltyCount: document.getElementById('final-penalty-count'),
+                qr: document.getElementById('qr-code'),
+                restartBtn: document.getElementById('btn-restart'),
+                leaderboardContainer: document.getElementById('leaderboard-container'),
+                leaderboardLoading: document.getElementById('leaderboard-loading')
+            }
+        };
+
+        // --- UTILITIES ---
+        const formatTime = (ms) => {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const deciseconds = Math.floor((ms % 1000) / 100);
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${deciseconds}`;
+        };
+
+        const shuffleArray = (array) => {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        };
+
+        const switchPhase = (phaseId) => {
+            Object.values(UI.phases).forEach(el => el.classList.add('hidden'));
+            Object.values(UI.phases).forEach(el => el.classList.remove('flex'));
+            
+            UI.phases[phaseId].classList.remove('hidden');
+            UI.phases[phaseId].classList.add('flex');
+        };
+
+        // --- TIMER LOGIC ---
+        const updateTimer = (timestamp) => {
+            if (!State.timer.running) return;
+            if (!State.timer.start) State.timer.start = timestamp;
+            
+            const penaltyMs = State.timer.penaltySeconds * 1000;
+            State.timer.currentDisplayMs = (timestamp - State.timer.start) + penaltyMs;
+            
+            UI.game.timer.textContent = formatTime(State.timer.currentDisplayMs);
+            State.timer.rafId = requestAnimationFrame(updateTimer);
+        };
+
+        const startTimer = () => {
+            State.timer.running = true;
+            State.timer.start = 0; 
+            State.timer.penaltySeconds = 0;
+            State.timer.penaltyCount = 0;
+            UI.game.penaltyTracker.textContent = "0";
+            State.timer.rafId = requestAnimationFrame(updateTimer);
+        };
+
+        const stopTimer = () => {
+            State.timer.running = false;
+            cancelAnimationFrame(State.timer.rafId);
+        };
+
+        const triggerPenalty = (clickEventX, clickEventY) => {
+            State.timer.penaltySeconds += 3;
+            State.timer.penaltyCount += 1;
+            
+            UI.game.penaltyTracker.textContent = State.timer.penaltyCount;
+            
+            const pText = document.createElement('div');
+            pText.className = 'text-red-500 font-extrabold text-3xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] penalty-anim';
+            pText.textContent = '+3 Sec Penalty!';
+            
+            pText.style.left = '75%'; 
+            pText.style.top = '50%';
+            
+            UI.game.arena.appendChild(pText);
+
+            setTimeout(() => {
+                if (pText.parentNode) pText.parentNode.removeChild(pText);
+            }, 1000);
+        };
+
+        // --- PHASE 1: LOGIN LOGIC ---
+        const formatIDDisplay = (idStr) => {
+            let displayStr = idStr;
+            while (displayStr.length < 7) { displayStr += '_'; }
+            return displayStr;
+        };
+
+        const updateLoginDisplay = () => {
+            UI.login.display.textContent = formatIDDisplay(State.inputID);
+            
+            const isFilled = State.inputID.length > 0;
+            const isValid = State.inputID.length === 7;
+
+            UI.login.display.classList.toggle('text-blue-400', isFilled && !isValid);
+            UI.login.display.classList.toggle('text-emerald-400', isValid);
+            UI.login.display.classList.toggle('text-slate-600', !isFilled);
+            UI.login.error.style.opacity = (isFilled && !isValid) ? '1' : '0';
+
+            if (isValid) {
+                UI.login.nextBtn.classList.remove('pointer-events-none', 'bg-slate-700', 'text-slate-500');
+                UI.login.nextBtn.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-500');
+            } else {
+                UI.login.nextBtn.classList.add('pointer-events-none', 'bg-slate-700', 'text-slate-500');
+                UI.login.nextBtn.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-500');
+            }
+        };
+
+        UI.login.numpadBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (navigator.vibrate) navigator.vibrate(15);
+                const val = e.currentTarget.dataset.val;
+
+                if (val === 'clear') {
+                    State.inputID = "";
+                } else if (val === 'del') {
+                    State.inputID = State.inputID.slice(0, -1);
+                } else {
+                    if (State.inputID.length < 7) State.inputID += val;
+                }
+                updateLoginDisplay();
+            });
+        });
+
+        UI.login.nextBtn.addEventListener('click', () => {
+            if (State.inputID.length === 7) switchPhase('instructions');
+        });
+
+        // --- PHASE 2: INSTRUCTIONS ---
+        UI.instructions.startBtn.addEventListener('click', () => {
+            initGamePhase();
+        });
+
+
+        // --- PHASE 3: GAME LOGIC ---
+        const initGamePhase = () => {
+            State.quiz.questions = shuffleArray(ALL_QUESTIONS);
+            State.quiz.currentIndex = 0;
+            State.quiz.isTransitioning = false;
+            
+            switchPhase('game');
+            loadQuestion();
+            startTimer();
+        };
+
+        const updateProgressBar = () => {
+            const total = State.quiz.questions.length;
+            const current = State.quiz.currentIndex;
+            const pct = (current / total) * 100; 
+            
+            UI.game.progressBar.style.width = `${pct}%`;
+            UI.game.runnerIcon.style.left = `${pct}%`;
+        };
+
+        const loadQuestion = () => {
+            const qData = State.quiz.questions[State.quiz.currentIndex];
+            
+            UI.game.qCounter.textContent = `${State.quiz.currentIndex + 1}/${State.quiz.questions.length}`;
+            updateProgressBar();
+            UI.game.docImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                UI.game.docImage.src = qData.img;
+                UI.game.docImage.onerror = () => {
+                    UI.game.docImage.style.display = 'none';
+                    document.getElementById('doc-placeholder-lines').classList.remove('hidden');
+                };
+                UI.game.docImage.onload = () => {
+                    UI.game.docImage.style.display = 'block';
+                    document.getElementById('doc-placeholder-lines').classList.add('hidden');
+                    UI.game.docImage.style.opacity = '0.9';
+                };
+            }, 50);
+            
+            UI.game.clueText.textContent = qData.clue;
+            UI.game.optionsContainer.innerHTML = '';
+
+            qData.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full text-left bg-slate-800 border-2 border-slate-700 p-4 rounded-xl text-sm font-semibold shadow-md hover:bg-slate-700 hover:border-slate-500 text-slate-200 leading-tight`;
+                btn.textContent = optText;
+                
+                btn.addEventListener('click', (e) => handleOptionClick(btn, index, qData.answer, e));
+                UI.game.optionsContainer.appendChild(btn);
+            });
+        };
+
+        const handleOptionClick = (btn, selectedIdx, correctIdx, e) => {
+            if (State.quiz.isTransitioning || btn.disabled) return;
+
+            const isCorrect = (selectedIdx === correctIdx);
+
+            if (isCorrect) {
+                State.quiz.isTransitioning = true;
+                if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+                
+                btn.classList.add('correct-answer');
+                const allBtns = UI.game.optionsContainer.querySelectorAll('button');
+                allBtns.forEach(b => b.disabled = true);
+
+                setTimeout(() => {
+                    State.quiz.isTransitioning = false;
+                    State.quiz.currentIndex++;
+
+                    if (State.quiz.currentIndex < State.quiz.questions.length) {
+                        loadQuestion();
+                    } else {
+                        UI.game.progressBar.style.width = `100%`;
+                        UI.game.runnerIcon.style.left = `100%`;
+                        setTimeout(completeGame, 300);
+                    }
+                }, 600);
+            } else {
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                btn.classList.add('wrong-answer');
+                btn.disabled = true;
+                triggerPenalty(e.clientX, e.clientY);
+            }
+        };
+
+        // --- PHASE 4: FINISH & LEADERBOARD LOGIC ---
+        const completeGame = async () => {
+            stopTimer();
+            
+            const finalTimeStr = formatTime(State.timer.currentDisplayMs);
+            const baseMs = State.timer.currentDisplayMs - (State.timer.penaltySeconds * 1000);
+            
+            UI.finish.finalId.textContent = State.inputID;
+            UI.finish.time.textContent = finalTimeStr;
+            UI.finish.baseTime.textContent = formatTime(baseMs);
+            UI.finish.penaltyTime.textContent = State.timer.penaltySeconds;
+            UI.finish.penaltyCount.textContent = State.timer.penaltyCount;
+
+            // Generate Dynamic QR
+            const intranetUrl = encodeURIComponent(`https://intranet.hospital.org/bcp-toolkit?empid=${State.inputID}&time=${finalTimeStr}`);
+            UI.finish.qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${intranetUrl}&color=0f172a&bgcolor=f8fafc`;
+
+            switchPhase('finish');
+            
+            // Handle Leaderboard
+            UI.finish.leaderboardContainer.innerHTML = ''; // clear previous
+            UI.finish.leaderboardContainer.appendChild(UI.finish.leaderboardLoading); // show loader
+            UI.finish.leaderboardLoading.classList.remove('hidden');
+
+            await saveAndFetchLeaderboard(State.timer.currentDisplayMs, finalTimeStr, State.inputID);
+        };
+
+        const saveAndFetchLeaderboard = async (timeMs, timeStr, empId) => {
+            if (!isAuthenticated || !auth.currentUser) {
+                renderLeaderboardError("Offline: Cannot connect to server.");
+                return;
+            }
+
+            try {
+                // Strict Path Rule: collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard')
+                const lbRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+                
+                // 1. Save new score
+                await addDoc(lbRef, {
+                    employeeId: empId,
+                    timeMs: timeMs,
+                    timeStr: timeStr,
+                    timestamp: Date.now()
+                });
+
+                // 2. Fetch all scores (Strict Rule: No complex queries, fetch all and sort locally)
+                const snapshot = await getDocs(lbRef);
+                let scores = [];
+                snapshot.forEach(doc => {
+                    scores.push({ id: doc.id, ...doc.data() });
+                });
+
+                // 3. Sort locally by time ascending
+                scores.sort((a, b) => a.timeMs - b.timeMs);
+                
+                // 4. Get Top 10
+                const top10 = scores.slice(0, 10);
+                
+                // 5. Render
+                renderLeaderboard(top10, empId, timeMs);
+
+            } catch (error) {
+                console.error("Leaderboard Error:", error);
+                renderLeaderboardError("Failed to update leaderboard.");
+            }
+        };
+
+        const renderLeaderboardError = (msg) => {
+            UI.finish.leaderboardContainer.innerHTML = `
+                <div class="flex items-center justify-center h-32 text-red-400 text-sm">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    ${msg}
+                </div>`;
+        };
+
+        const renderLeaderboard = (topScores, currentEmpId, currentTimeMs) => {
+            UI.finish.leaderboardContainer.innerHTML = '';
+            
+            if (topScores.length === 0) {
+                UI.finish.leaderboardContainer.innerHTML = '<div class="p-4 text-center text-slate-500 text-sm">No runners yet. Be the first!</div>';
+                return;
+            }
+
+            topScores.forEach((score, index) => {
+                const rank = index + 1;
+                const isCurrentPlayer = (score.employeeId === currentEmpId && score.timeMs === currentTimeMs);
+                
+                let rankStyle = "text-slate-400 bg-slate-800 border-slate-700";
+                let rankIcon = rank;
+                
+                if (rank === 1) {
+                    rankStyle = "text-yellow-900 bg-gradient-to-br from-yellow-300 to-yellow-500 border-yellow-400 shadow-[0_0_10px_rgba(253,224,71,0.4)]";
+                    rankIcon = "1st";
+                } else if (rank === 2) {
+                    rankStyle = "text-slate-900 bg-gradient-to-br from-slate-300 to-slate-400 border-slate-300";
+                    rankIcon = "2nd";
+                } else if (rank === 3) {
+                    rankStyle = "text-orange-900 bg-gradient-to-br from-orange-300 to-orange-500 border-orange-400";
+                    rankIcon = "3rd";
+                }
+
+                const rowStyle = isCurrentPlayer 
+                    ? "bg-blue-900/30 border border-blue-500/50 transform scale-[1.02] shadow-md z-10" 
+                    : "bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700/50";
+
+                const textHighlight = isCurrentPlayer ? "text-blue-300 font-bold" : "text-slate-300";
+
+                const rowHtml = `
+                    <div class="grid grid-cols-12 gap-2 items-center p-2 rounded-lg transition-all ${rowStyle} mb-1">
+                        <div class="col-span-2 flex justify-center">
+                            <div class="w-7 h-7 flex items-center justify-center rounded-full border text-[10px] font-extrabold ${rankStyle}">
+                                ${rankIcon}
+                            </div>
+                        </div>
+                        <div class="col-span-5 font-digital tracking-widest ${textHighlight}">
+                            ***${score.employeeId.slice(-4)}
+                        </div>
+                        <div class="col-span-5 text-right font-digital text-lg ${isCurrentPlayer ? 'text-emerald-400' : 'text-slate-300'}">
+                            ${score.timeStr}
+                        </div>
+                    </div>
+                `;
+                
+                UI.finish.leaderboardContainer.insertAdjacentHTML('beforeend', rowHtml);
+            });
+        };
+
+        UI.finish.restartBtn.addEventListener('click', () => {
+            State.inputID = "";
+            updateLoginDisplay();
+            switchPhase('login');
+        });
+
+        // Initialize UI
+        updateLoginDisplay();
+        switchPhase('login');
+        
+    </script>
+</body>
+</html>
