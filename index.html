@@ -6,9 +6,7 @@
     <title>BCP Marathon - Downtime Relay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --app-height: 100dvh;
-        }
+        :root { --app-height: 100dvh; }
         * {
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
@@ -24,7 +22,6 @@
             overscroll-behavior: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        /* Paper Form Simulation: Strict 8.5 x 11 Aspect Ratio */
         .paper-portrait {
             aspect-ratio: 8.5 / 11;
             background: #ffffff;
@@ -32,10 +29,7 @@
                 radial-gradient(#e2e8f0 1.2px, transparent 1.2px),
                 linear-gradient(to bottom, #ffffff, #f8fafc);
             background-size: 14px 14px, 100% 100%;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.4), 
-                0 10px 20px -3px rgba(0, 0, 0, 0.6),
-                inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 10px 20px -3px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
             color: #0f172a;
         }
         .screen-container {
@@ -46,32 +40,21 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-        .shake-animation {
-            animation: errorShake 0.35s cubic-bezier(.36,.07,.19,.97) both;
-        }
+        .shake-animation { animation: errorShake 0.35s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes errorShake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             20%, 80% { transform: translate3d(3px, 0, 0); }
             30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
             40%, 60% { transform: translate3d(5px, 0, 0); }
         }
-        .penalty-flash {
-            animation: redFlash 0.45s cubic-bezier(0.1, 0.9, 0.2, 1);
-        }
+        .penalty-flash { animation: redFlash 0.45s cubic-bezier(0.1, 0.9, 0.2, 1); }
         @keyframes redFlash {
             0% { background-color: rgba(239, 68, 68, 0.45); }
             100% { background-color: transparent; }
         }
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 2px;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
     </style>
 </head>
 <body class="relative">
@@ -81,25 +64,13 @@
     <!-- 1. ENTRY SCREEN -->
     <div id="screen-login" class="screen-container justify-center items-center p-4">
         <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center">
-            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-black text-2xl mb-3 border border-blue-500/20 shadow-inner">
-                ⚡
-            </div>
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-black text-2xl mb-3 border border-blue-500/20 shadow-inner">⚡</div>
             <h1 class="text-2xl font-black tracking-tight text-white uppercase mb-1">Downtime Relay</h1>
             <p class="text-xs text-slate-400 mb-6 font-semibold tracking-wide uppercase">Annual Nursing Skills Fair • BCP Marathon</p>
             
             <div class="w-full text-left mb-6">
                 <label for="emp-id" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Employee Number</label>
-                <input 
-                    type="tel" 
-                    id="emp-id" 
-                    maxlength="7" 
-                    inputmode="numeric" 
-                    pattern="[0-9]*" 
-                    placeholder="0000000"
-                    class="w-full text-center text-3xl font-mono font-bold py-3 bg-slate-950 border-2 border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-white tracking-widest placeholder:text-slate-700 transition-colors"
-                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                    onkeydown="if(event.key === 'Enter') handleLogin()"
-                >
+                <input type="tel" id="emp-id" maxlength="7" inputmode="numeric" pattern="[0-9]*" placeholder="0000000" class="w-full text-center text-3xl font-mono font-bold py-3 bg-slate-950 border-2 border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-white tracking-widest placeholder:text-slate-700 transition-colors" oninput="this.value = this.value.replace(/[^0-9]/g, '')" onkeydown="if(event.key === 'Enter') handleLogin()">
                 <p id="login-error" class="text-rose-400 text-xs mt-2 text-center font-semibold hidden">Must be exactly 7 numeric digits</p>
             </div>
 
@@ -117,7 +88,6 @@
                 <div class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></div>
                 <h2 class="text-base font-bold uppercase tracking-wider text-slate-200">Relay Briefing & Rules</h2>
             </div>
-
             <div class="space-y-3 text-sm text-slate-300 leading-relaxed mb-6 font-normal">
                 <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800/80">
                     <span class="text-xl">📋</span>
@@ -132,7 +102,6 @@
                     <p><strong class="text-white">Poka-Yoke Rule:</strong> Incorrect choices add a <strong class="text-amber-400">+3s penalty</strong>. You cannot skip or advance until the correct match is chosen.</p>
                 </div>
             </div>
-
             <button onclick="startRelay()" class="w-full py-4 bg-emerald-600 active:bg-emerald-700 hover:bg-emerald-500 text-white font-bold rounded-xl text-base shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
                 <span>Start Clock</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -140,18 +109,14 @@
         </div>
     </div>
 
-    <!-- 3. GAMEPLAY SCREEN (SIDE-BY-SIDE) -->
+    <!-- 3. GAMEPLAY SCREEN -->
     <div id="screen-game" class="screen-container p-2 sm:p-4 hidden">
         <header class="h-14 bg-slate-900 border border-slate-800 rounded-xl px-4 flex items-center justify-between shadow-md mb-2 shrink-0">
             <div class="flex items-center gap-2 sm:gap-3">
                 <span class="text-[10px] sm:text-xs font-bold tracking-widest text-slate-400 uppercase">RUNNER:</span>
                 <span id="hud-emp" class="font-mono text-xs sm:text-sm font-bold bg-slate-800 px-2.5 py-1 rounded border border-slate-700 text-blue-400">0000000</span>
             </div>
-            
-            <div id="timer-display" class="font-mono text-xl sm:text-2xl font-black text-amber-400 tracking-wider">
-                00.00s
-            </div>
-
+            <div id="timer-display" class="font-mono text-xl sm:text-2xl font-black text-amber-400 tracking-wider">00.00s</div>
             <div class="flex items-center gap-2">
                 <span class="text-[10px] sm:text-xs font-bold tracking-widest text-slate-400 uppercase">PROGRESS:</span>
                 <span id="progress-text" class="font-mono text-xs sm:text-sm font-bold text-white bg-slate-800 px-2 py-1 rounded border border-slate-700">1/10</span>
@@ -159,36 +124,26 @@
         </header>
 
         <main class="flex-1 grid grid-cols-2 gap-2 sm:gap-4 overflow-hidden min-h-0">
-            <!-- LEFT COLUMN: Portrait Paper Document -->
             <section class="h-full flex flex-col items-center justify-center bg-slate-900/60 border border-slate-800 rounded-xl p-2 sm:p-4 overflow-hidden relative">
                 <div class="absolute top-2 left-3 text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest pointer-events-none">BCP Document Repository</div>
-                
                 <div id="paper-card" class="paper-portrait w-full max-h-full rounded-md p-3 sm:p-5 flex flex-col justify-between select-none transition-transform">
                     <div class="border-b-2 border-slate-800 pb-2">
                         <div class="flex justify-between items-center text-[7px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
                             <span>Clinical Downtime Contingency</span>
                             <span class="text-rose-600 font-black">FORM-BCP-AUTH</span>
                         </div>
-                        <h3 id="paper-title" class="text-xs sm:text-sm md:text-base font-black text-slate-900 leading-snug mt-1">
-                            --
-                        </h3>
+                        <h3 id="paper-title" class="text-xs sm:text-sm md:text-base font-black text-slate-900 leading-snug mt-1">--</h3>
                     </div>
-
                     <div class="my-auto py-2">
                         <div class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Functional Indicator</div>
-                        <p id="paper-clue" class="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-700 italic border-l-2 border-slate-300 pl-2 leading-relaxed">
-                            --
-                        </p>
+                        <p id="paper-clue" class="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-700 italic border-l-2 border-slate-300 pl-2 leading-relaxed">--</p>
                     </div>
-
                     <div class="border-t border-slate-300 pt-2 flex justify-between items-end text-[7px] sm:text-[8px] text-slate-400 font-mono">
                         <div>ORIGINAL HARD COPY<br>POST-UPTIME RECONCILIATION</div>
                         <div class="text-right font-bold text-slate-500">REV. 2026.1</div>
                     </div>
                 </div>
             </section>
-
-            <!-- RIGHT COLUMN: EMR Match Choices -->
             <section class="h-full flex flex-col justify-center bg-slate-900/60 border border-slate-800 rounded-xl p-2 sm:p-4 overflow-hidden">
                 <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-2 px-1">Select Electronic EMR System</div>
                 <div id="choices-container" class="flex-1 flex flex-col justify-center gap-2 sm:gap-3"></div>
@@ -199,16 +154,11 @@
     <!-- 4. SUMMARY & LEADERBOARD SCREEN -->
     <div id="screen-finish" class="screen-container justify-center items-center p-3 sm:p-6 hidden">
         <div class="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl flex flex-col md:flex-row gap-6 max-h-[92dvh] overflow-hidden">
-            
             <div class="flex-1 flex flex-col items-center justify-center bg-slate-950 p-6 rounded-xl border border-slate-800/80 text-center">
-                <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-widest rounded-full mb-3">
-                    Marathon Finished
-                </span>
+                <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-widest rounded-full mb-3">Marathon Finished</span>
                 <h2 class="text-xl sm:text-2xl font-black text-white mb-1">Final Relay Pace</h2>
-                
                 <div id="final-time" class="font-mono text-5xl sm:text-6xl font-black text-amber-400 my-2">00.00s</div>
                 <div id="penalty-stat" class="text-xs font-semibold text-slate-400 mb-6">Includes 0s in penalties</div>
-
                 <div class="w-full max-w-xs space-y-2">
                     <button onclick="resetToLogin()" class="w-full py-3.5 bg-blue-600 active:bg-blue-700 hover:bg-blue-500 font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
                         <span>Next Associate</span>
@@ -216,20 +166,15 @@
                     </button>
                 </div>
             </div>
-
             <div class="flex-1 flex flex-col bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800/80 min-h-0">
                 <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
-                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                        <span>🏆 Fair Leaderboard</span>
-                    </h3>
+                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider flex items-center gap-2">🏆 Fair Leaderboard</h3>
                     <span id="lb-status" class="text-[10px] font-mono font-medium text-slate-500 uppercase">Connecting...</span>
                 </div>
-
                 <div class="flex-1 overflow-y-auto pr-1">
                     <ul id="leaderboard-list" class="space-y-1.5 font-mono text-xs sm:text-sm"></ul>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -254,16 +199,13 @@
             { paper: "Manual Discharge Clearance", clue: "Cross-department gate-check linking clinical sign-off, billing, and home instruction.", answer: "Electronic Discharge Module", distractors: ["Patient Registration", "OR Booking Queue", "Nursing Handover"] }
         ];
 
-        // Synthesized Audio Engine (No external network latency)
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
                 const AudioClass = window.AudioContext || window.webkitAudioContext;
                 if (AudioClass) audioCtx = new AudioClass();
             }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(type) {
@@ -280,61 +222,39 @@
                 osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
+                osc.start(now); osc.stop(now + 0.25);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(140, now);
                 osc.frequency.exponentialRampToValueAtTime(90, now + 0.25);
                 gain.gain.setValueAtTime(0.2, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
+                osc.start(now); osc.stop(now + 0.25);
             } else if (type === 'finish') {
                 [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                     const subOsc = audioCtx.createOscillator();
                     const subGain = audioCtx.createGain();
-                    subOsc.connect(subGain);
-                    subGain.connect(audioCtx.destination);
+                    subOsc.connect(subGain); subGain.connect(audioCtx.destination);
                     subOsc.type = 'triangle';
                     subOsc.frequency.setValueAtTime(freq, now + idx * 0.08);
                     subGain.gain.setValueAtTime(0.12, now + idx * 0.08);
                     subGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
-                    subOsc.start(now + idx * 0.08);
-                    subOsc.stop(now + idx * 0.08 + 0.35);
+                    subOsc.start(now + idx * 0.08); subOsc.stop(now + idx * 0.08 + 0.35);
                 });
             }
         }
 
-        const state = {
-            empId: '',
-            startTime: 0,
-            accumulatedPenalty: 0,
-            timerId: null,
-            currentIndex: 0,
-            activeQueue: [],
-            isProcessingGuess: false
-        };
-
+        const state = { empId: '', startTime: 0, accumulatedPenalty: 0, timerId: null, currentIndex: 0, activeQueue: [], isProcessingGuess: false };
         const dom = {
-            screenLogin: document.getElementById('screen-login'),
-            screenInstructions: document.getElementById('screen-instructions'),
-            screenGame: document.getElementById('screen-game'),
-            screenFinish: document.getElementById('screen-finish'),
-            empInput: document.getElementById('emp-id'),
-            loginError: document.getElementById('login-error'),
-            hudEmp: document.getElementById('hud-emp'),
-            timerDisplay: document.getElementById('timer-display'),
-            progressText: document.getElementById('progress-text'),
-            paperCard: document.getElementById('paper-card'),
-            paperTitle: document.getElementById('paper-title'),
-            paperClue: document.getElementById('paper-clue'),
-            choicesContainer: document.getElementById('choices-container'),
-            flashOverlay: document.getElementById('flash-overlay'),
-            finalTime: document.getElementById('final-time'),
-            penaltyStat: document.getElementById('penalty-stat'),
-            lbStatus: document.getElementById('lb-status'),
-            leaderboardList: document.getElementById('leaderboard-list')
+            screenLogin: document.getElementById('screen-login'), screenInstructions: document.getElementById('screen-instructions'),
+            screenGame: document.getElementById('screen-game'), screenFinish: document.getElementById('screen-finish'),
+            empInput: document.getElementById('emp-id'), loginError: document.getElementById('login-error'),
+            hudEmp: document.getElementById('hud-emp'), timerDisplay: document.getElementById('timer-display'),
+            progressText: document.getElementById('progress-text'), paperCard: document.getElementById('paper-card'),
+            paperTitle: document.getElementById('paper-title'), paperClue: document.getElementById('paper-clue'),
+            choicesContainer: document.getElementById('choices-container'), flashOverlay: document.getElementById('flash-overlay'),
+            finalTime: document.getElementById('final-time'), penaltyStat: document.getElementById('penalty-stat'),
+            lbStatus: document.getElementById('lb-status'), leaderboardList: document.getElementById('leaderboard-list')
         };
 
         function shuffleArray(arr) {
@@ -354,33 +274,19 @@
         function handleLogin() {
             initAudio();
             const raw = dom.empInput.value.trim();
-            if (raw.length !== 7) {
-                dom.loginError.classList.remove('hidden');
-                dom.empInput.classList.add('border-rose-500');
-                return;
-            }
-            dom.loginError.classList.add('hidden');
-            dom.empInput.classList.remove('border-rose-500');
-            state.empId = raw;
-            dom.hudEmp.innerText = state.empId;
-            showScreen(dom.screenInstructions);
+            if (raw.length !== 7) { dom.loginError.classList.remove('hidden'); dom.empInput.classList.add('border-rose-500'); return; }
+            dom.loginError.classList.add('hidden'); dom.empInput.classList.remove('border-rose-500');
+            state.empId = raw; dom.hudEmp.innerText = state.empId; showScreen(dom.screenInstructions);
         }
 
         function startRelay() {
             initAudio();
             state.activeQueue = shuffleArray(QUESTION_BANK).slice(0, CONFIG.ROUND_QUESTIONS);
-            state.currentIndex = 0;
-            state.accumulatedPenalty = 0;
-            state.isProcessingGuess = false;
-            
-            showScreen(dom.screenGame);
-            renderCurrentQuestion();
-
-            state.startTime = performance.now();
-            clearInterval(state.timerId);
+            state.currentIndex = 0; state.accumulatedPenalty = 0; state.isProcessingGuess = false;
+            showScreen(dom.screenGame); renderCurrentQuestion();
+            state.startTime = performance.now(); clearInterval(state.timerId);
             state.timerId = setInterval(() => {
-                const now = performance.now();
-                const totalSeconds = ((now - state.startTime + state.accumulatedPenalty) / 1000).toFixed(2);
+                const totalSeconds = ((performance.now() - state.startTime + state.accumulatedPenalty) / 1000).toFixed(2);
                 dom.timerDisplay.innerText = `${totalSeconds}s`;
             }, 30);
         }
@@ -388,14 +294,9 @@
         function renderCurrentQuestion() {
             const q = state.activeQueue[state.currentIndex];
             dom.progressText.innerText = `${state.currentIndex + 1}/${CONFIG.ROUND_QUESTIONS}`;
-            
-            dom.paperTitle.innerText = q.paper;
-            dom.paperClue.innerText = `"${q.clue}"`;
-
+            dom.paperTitle.innerText = q.paper; dom.paperClue.innerText = `"${q.clue}"`;
             dom.choicesContainer.innerHTML = '';
-            const choices = shuffleArray([q.answer, ...q.distractors]);
-
-            choices.forEach(optionText => {
+            shuffleArray([q.answer, ...q.distractors]).forEach(optionText => {
                 const btn = document.createElement('button');
                 btn.className = "w-full min-h-[46px] py-2.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700 rounded-xl text-left text-xs sm:text-sm font-bold text-slate-200 transition-colors flex items-center justify-between shadow-sm";
                 btn.innerHTML = `<span class="truncate">${optionText}</span><span class="status-marker text-xs font-mono ml-2"></span>`;
@@ -406,121 +307,102 @@
 
         function evaluateChoice(btn, isCorrect) {
             if (state.isProcessingGuess || btn.disabled) return;
-
             if (isCorrect) {
-                state.isProcessingGuess = true;
-                playSound('correct');
-
-                btn.classList.remove('bg-slate-800', 'border-slate-700');
-                btn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white');
+                state.isProcessingGuess = true; playSound('correct');
+                btn.classList.remove('bg-slate-800', 'border-slate-700'); btn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white');
                 btn.querySelector('.status-marker').innerText = '✓';
-
                 Array.from(dom.choicesContainer.children).forEach(b => b.disabled = true);
-
                 setTimeout(() => {
-                    state.currentIndex++;
-                    state.isProcessingGuess = false;
-                    if (state.currentIndex >= CONFIG.ROUND_QUESTIONS) {
-                        finalizeRelay();
-                    } else {
-                        renderCurrentQuestion();
-                    }
+                    state.currentIndex++; state.isProcessingGuess = false;
+                    if (state.currentIndex >= CONFIG.ROUND_QUESTIONS) finalizeRelay(); else renderCurrentQuestion();
                 }, 320);
-
             } else {
-                state.accumulatedPenalty += CONFIG.PENALTY_MS;
-                playSound('wrong');
-                
-                dom.flashOverlay.classList.add('penalty-flash');
-                dom.paperCard.classList.add('shake-animation');
-                
-                setTimeout(() => {
-                    dom.flashOverlay.classList.remove('penalty-flash');
-                    dom.paperCard.classList.remove('shake-animation');
-                }, 400);
-
-                btn.disabled = true;
-                btn.classList.remove('bg-slate-800', 'border-slate-700', 'hover:bg-slate-700');
+                state.accumulatedPenalty += CONFIG.PENALTY_MS; playSound('wrong');
+                dom.flashOverlay.classList.add('penalty-flash'); dom.paperCard.classList.add('shake-animation');
+                setTimeout(() => { dom.flashOverlay.classList.remove('penalty-flash'); dom.paperCard.classList.remove('shake-animation'); }, 400);
+                btn.disabled = true; btn.classList.remove('bg-slate-800', 'border-slate-700', 'hover:bg-slate-700');
                 btn.classList.add('bg-rose-950/80', 'border-rose-700/60', 'text-rose-300', 'cursor-not-allowed', 'opacity-60');
                 btn.querySelector('.status-marker').innerText = '+3s ✕';
             }
         }
 
         function finalizeRelay() {
-            clearInterval(state.timerId);
-            playSound('finish');
-
+            clearInterval(state.timerId); playSound('finish');
             const totalMs = performance.now() - state.startTime + state.accumulatedPenalty;
             const finalPace = (totalMs / 1000).toFixed(2);
-
             dom.finalTime.innerText = `${finalPace}s`;
             dom.penaltyStat.innerText = `Includes ${(state.accumulatedPenalty / 1000).toFixed(0)}s in error penalties`;
-
-            showScreen(dom.screenFinish);
-            persistAndSyncLeaderboard(state.empId, finalPace);
+            showScreen(dom.screenFinish); persistAndSyncLeaderboard(state.empId, finalPace);
         }
 
-        // Resilient GET Pipeline (Eliminates broken sendBeacon POST redirects)
-        function dispatchScore(emp, time) {
-            const endpoint = `${CONFIG.GAS_WRITE_URL}?emp=${encodeURIComponent(emp)}&time=${encodeURIComponent(time)}&_t=${Date.now()}`;
-
-            fetch(endpoint, {
-                method: 'GET',
-                mode: 'no-cors',
-                cache: 'no-store',
-                keepalive: true
-            }).catch(() => {
-                const fallbackImg = new Image();
-                fallbackImg.src = endpoint;
-            });
+        // ==========================================
+        // THE FIX: HIDDEN IFRAME FORM TRANSPORT
+        // Bypasses all CORS / fetch / 302 drop issues on mobile
+        // ==========================================
+        function forceSaveToGoogle(emp, time) {
+            const frameName = 'google_sink_' + Date.now();
+            
+            // Create invisible iframe
+            const iframe = document.createElement('iframe');
+            iframe.name = frameName;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // Create form targeting the iframe
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = CONFIG.GAS_WRITE_URL;
+            form.target = frameName;
+            form.style.display = 'none';
+            
+            // Append inputs
+            const iEmp = document.createElement('input'); iEmp.name = 'emp'; iEmp.value = emp; form.appendChild(iEmp);
+            const iTime = document.createElement('input'); iTime.name = 'time'; iTime.value = time; form.appendChild(iTime);
+            
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
+            
+            // Cleanup
+            setTimeout(() => { form.remove(); iframe.remove(); }, 5000);
         }
 
         async function persistAndSyncLeaderboard(emp, time) {
             dom.lbStatus.innerText = "Recording...";
             dom.lbStatus.className = "text-[10px] font-mono font-medium text-amber-400 uppercase";
 
-            dispatchScore(emp, time);
+            // Execute guaranteed save
+            forceSaveToGoogle(emp, time);
 
             try {
                 dom.lbStatus.innerText = "Syncing...";
-                const cacheBuster = `&_t=${Date.now()}`;
-                const response = await fetch(CONFIG.CSV_READ_URL + cacheBuster, { cache: 'no-store' });
-                
-                if (!response.ok) throw new Error("CSV fetch status failed");
+                const response = await fetch(CONFIG.CSV_READ_URL + '&_t=' + Date.now(), { cache: 'no-store' });
+                if (!response.ok) throw new Error("CSV fetch failed");
                 const rawCsv = await response.text();
 
                 const rows = rawCsv.split(/\r?\n/).slice(1);
                 const records = [];
-
                 rows.forEach(r => {
                     const cols = r.split(',');
                     if (cols.length >= 2) {
                         const parsedEmp = cols[0].trim().replace(/['"]/g, '');
                         const parsedTime = parseFloat(cols[1].trim().replace(/['"]/g, ''));
-                        if (parsedEmp && !isNaN(parsedTime)) {
-                            records.push({ emp: parsedEmp, time: parsedTime });
-                        }
+                        if (parsedEmp && !isNaN(parsedTime)) records.push({ emp: parsedEmp, time: parsedTime });
                     }
                 });
 
-                // Optimistically insert current record for zero-delay UI feedback
+                // Force current player to top immediately (Optimistic UI)
                 records.push({ emp: emp, time: parseFloat(time) });
 
                 const dedupedMap = new Map();
                 records.forEach(entry => {
-                    if (!dedupedMap.has(entry.emp) || entry.time < dedupedMap.get(entry.emp)) {
-                        dedupedMap.set(entry.emp, entry.time);
-                    }
+                    if (!dedupedMap.has(entry.emp) || entry.time < dedupedMap.get(entry.emp)) dedupedMap.set(entry.emp, entry.time);
                 });
 
-                const leaderboard = Array.from(dedupedMap, ([emp, time]) => ({ emp, time }))
-                    .sort((a, b) => a.time - b.time)
-                    .slice(0, 10);
-
+                const leaderboard = Array.from(dedupedMap, ([e, t]) => ({ emp: e, time: t })).sort((a, b) => a.time - b.time).slice(0, 10);
                 renderLeaderboardUI(leaderboard);
                 dom.lbStatus.innerText = "Live Synced";
                 dom.lbStatus.className = "text-[10px] font-mono font-medium text-emerald-400 uppercase";
-
             } catch (err) {
                 renderLeaderboardUI([{ emp: emp, time: parseFloat(time) }]);
                 dom.lbStatus.innerText = "Local Session";
@@ -533,33 +415,17 @@
             records.forEach((row, i) => {
                 const li = document.createElement('li');
                 const isCurrent = row.emp === state.empId;
-                
-                li.className = `flex justify-between items-center p-2 rounded-lg border ${
-                    isCurrent 
-                        ? 'bg-blue-950/60 border-blue-500/50 text-blue-200 shadow-sm' 
-                        : 'bg-slate-900/60 border-slate-800 text-slate-300'
-                }`;
-
+                li.className = `flex justify-between items-center p-2 rounded-lg border ${isCurrent ? 'bg-blue-950/60 border-blue-500/50 text-blue-200 shadow-sm' : 'bg-slate-900/60 border-slate-800 text-slate-300'}`;
                 let rankBadge = `<span class="w-5 h-5 rounded flex items-center justify-center font-bold text-xs bg-slate-800 text-slate-400">${i + 1}</span>`;
                 if (i === 0) rankBadge = `<span class="w-5 h-5 rounded flex items-center justify-center font-black text-xs bg-amber-400 text-slate-950 shadow-sm shadow-amber-400/50">1</span>`;
                 if (i === 1) rankBadge = `<span class="w-5 h-5 rounded flex items-center justify-center font-bold text-xs bg-slate-300 text-slate-950">2</span>`;
                 if (i === 2) rankBadge = `<span class="w-5 h-5 rounded flex items-center justify-center font-bold text-xs bg-amber-700 text-white">3</span>`;
-
-                li.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        ${rankBadge}
-                        <span class="tracking-wider ${isCurrent ? 'font-bold text-white' : ''}">ID: ${row.emp}</span>
-                    </div>
-                    <span class="font-bold font-mono ${isCurrent ? 'text-amber-400' : 'text-slate-400'}">${row.time.toFixed(2)}s</span>
-                `;
+                li.innerHTML = `<div class="flex items-center gap-2">${rankBadge}<span class="tracking-wider ${isCurrent ? 'font-bold text-white' : ''}">ID: ${row.emp}</span></div><span class="font-bold font-mono ${isCurrent ? 'text-amber-400' : 'text-slate-400'}">${row.time.toFixed(2)}s</span>`;
                 dom.leaderboardList.appendChild(li);
             });
         }
 
-        function resetToLogin() {
-            dom.empInput.value = '';
-            showScreen(dom.screenLogin);
-        }
+        function resetToLogin() { dom.empInput.value = ''; showScreen(dom.screenLogin); }
     </script>
 </body>
 </html>
