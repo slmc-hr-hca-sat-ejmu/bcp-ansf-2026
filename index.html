@@ -142,7 +142,6 @@
 
     <!-- 3. GAMEPLAY SCREEN (SIDE-BY-SIDE) -->
     <div id="screen-game" class="screen-container p-2 sm:p-4 hidden">
-        <!-- Station HUD -->
         <header class="h-14 bg-slate-900 border border-slate-800 rounded-xl px-4 flex items-center justify-between shadow-md mb-2 shrink-0">
             <div class="flex items-center gap-2 sm:gap-3">
                 <span class="text-[10px] sm:text-xs font-bold tracking-widest text-slate-400 uppercase">RUNNER:</span>
@@ -159,9 +158,7 @@
             </div>
         </header>
 
-        <!-- 2-Column Split Workspace -->
         <main class="flex-1 grid grid-cols-2 gap-2 sm:gap-4 overflow-hidden min-h-0">
-            
             <!-- LEFT COLUMN: Portrait Paper Document -->
             <section class="h-full flex flex-col items-center justify-center bg-slate-900/60 border border-slate-800 rounded-xl p-2 sm:p-4 overflow-hidden relative">
                 <div class="absolute top-2 left-3 text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest pointer-events-none">BCP Document Repository</div>
@@ -194,9 +191,7 @@
             <!-- RIGHT COLUMN: EMR Match Choices -->
             <section class="h-full flex flex-col justify-center bg-slate-900/60 border border-slate-800 rounded-xl p-2 sm:p-4 overflow-hidden">
                 <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-2 px-1">Select Electronic EMR System</div>
-                <div id="choices-container" class="flex-1 flex flex-col justify-center gap-2 sm:gap-3">
-                    <!-- Buttons injected dynamically -->
-                </div>
+                <div id="choices-container" class="flex-1 flex flex-col justify-center gap-2 sm:gap-3"></div>
             </section>
         </main>
     </div>
@@ -205,7 +200,6 @@
     <div id="screen-finish" class="screen-container justify-center items-center p-3 sm:p-6 hidden">
         <div class="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl flex flex-col md:flex-row gap-6 max-h-[92dvh] overflow-hidden">
             
-            <!-- Runner Score Column -->
             <div class="flex-1 flex flex-col items-center justify-center bg-slate-950 p-6 rounded-xl border border-slate-800/80 text-center">
                 <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-widest rounded-full mb-3">
                     Marathon Finished
@@ -223,7 +217,6 @@
                 </div>
             </div>
 
-            <!-- Global Leaderboard Column -->
             <div class="flex-1 flex flex-col bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800/80 min-h-0">
                 <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
                     <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -233,9 +226,7 @@
                 </div>
 
                 <div class="flex-1 overflow-y-auto pr-1">
-                    <ul id="leaderboard-list" class="space-y-1.5 font-mono text-xs sm:text-sm">
-                        <!-- Populated dynamically -->
-                    </ul>
+                    <ul id="leaderboard-list" class="space-y-1.5 font-mono text-xs sm:text-sm"></ul>
                 </div>
             </div>
 
@@ -243,7 +234,6 @@
     </div>
 
     <script>
-        // CORE CONFIGURATION
         const CONFIG = {
             CSV_READ_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSwX1nCx0px7lyDQr8YyzlL_55OZntbBGMbO9oHUqkQOkqiXtxgtYlxbRkjmwbUmYLep_OwNJjZ_kB/pub?output=csv',
             GAS_WRITE_URL: 'https://script.google.com/macros/s/AKfycbwfTMBq6GiZWKxI6wE5IS8Shu7jtB4shO3IWue-1DJveAmzwvKOHjYqE5FmOVlwcly2/exec',
@@ -251,7 +241,6 @@
             ROUND_QUESTIONS: 10
         };
 
-        // CLINICAL QUESTION BANK
         const QUESTION_BANK = [
             { paper: "24-Hour Paper MAR", clue: "Scheduled medication verification, dose signing, and PRN response logs.", answer: "e-MAR Application", distractors: ["CPOE Physician Orders", "Pharmacy Queue", "Vital Graphic Chart"] },
             { paper: "Vital Signs Flowsheet", clue: "Shift trend recording for Temperature, Pulse, Respiration, Blood Pressure, and SpO2.", answer: "Vitals & Measurements", distractors: ["SBAR Handover Form", "Lab Orders System", "Discharge Summary"] },
@@ -265,12 +254,12 @@
             { paper: "Manual Discharge Clearance", clue: "Cross-department gate-check linking clinical sign-off, billing, and home instruction.", answer: "Electronic Discharge Module", distractors: ["Patient Registration", "OR Booking Queue", "Nursing Handover"] }
         ];
 
-        // PROCEDURAL AUDIO SYNTHESIZER (Zero external asset latency)
+        // Synthesized Audio Engine (No external network latency)
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (AudioContextClass) audioCtx = new AudioContextClass();
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
             }
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
@@ -287,8 +276,8 @@
 
             if (type === 'correct') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12); // E5
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
                 osc.start(now);
@@ -317,7 +306,6 @@
             }
         }
 
-        // ENGINE STATE
         const state = {
             empId: '',
             startTime: 0,
@@ -328,7 +316,6 @@
             isProcessingGuess: false
         };
 
-        // DOM HOOKS
         const dom = {
             screenLogin: document.getElementById('screen-login'),
             screenInstructions: document.getElementById('screen-instructions'),
@@ -350,7 +337,6 @@
             leaderboardList: document.getElementById('leaderboard-list')
         };
 
-        // UTILITY: Fisher-Yates Array Shuffle
         function shuffleArray(arr) {
             const out = [...arr];
             for (let i = out.length - 1; i > 0; i--) {
@@ -360,13 +346,11 @@
             return out;
         }
 
-        // VIEW ROUTING
         function showScreen(screen) {
             [dom.screenLogin, dom.screenInstructions, dom.screenGame, dom.screenFinish].forEach(s => s.classList.add('hidden'));
             screen.classList.remove('hidden');
         }
 
-        // 1. LOGIN HANDLER
         function handleLogin() {
             initAudio();
             const raw = dom.empInput.value.trim();
@@ -382,7 +366,6 @@
             showScreen(dom.screenInstructions);
         }
 
-        // 2. ROUND INITIATION
         function startRelay() {
             initAudio();
             state.activeQueue = shuffleArray(QUESTION_BANK).slice(0, CONFIG.ROUND_QUESTIONS);
@@ -393,7 +376,6 @@
             showScreen(dom.screenGame);
             renderCurrentQuestion();
 
-            // Precision Clock Loop using performance.now()
             state.startTime = performance.now();
             clearInterval(state.timerId);
             state.timerId = setInterval(() => {
@@ -403,16 +385,13 @@
             }, 30);
         }
 
-        // 3. QUESTION INJECTION
         function renderCurrentQuestion() {
             const q = state.activeQueue[state.currentIndex];
             dom.progressText.innerText = `${state.currentIndex + 1}/${CONFIG.ROUND_QUESTIONS}`;
             
-            // Update Physical Paper Card
             dom.paperTitle.innerText = q.paper;
             dom.paperClue.innerText = `"${q.clue}"`;
 
-            // Prepare Randomized Multiple Choices
             dom.choicesContainer.innerHTML = '';
             const choices = shuffleArray([q.answer, ...q.distractors]);
 
@@ -420,13 +399,11 @@
                 const btn = document.createElement('button');
                 btn.className = "w-full min-h-[46px] py-2.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700 rounded-xl text-left text-xs sm:text-sm font-bold text-slate-200 transition-colors flex items-center justify-between shadow-sm";
                 btn.innerHTML = `<span class="truncate">${optionText}</span><span class="status-marker text-xs font-mono ml-2"></span>`;
-                
                 btn.onclick = () => evaluateChoice(btn, optionText === q.answer);
                 dom.choicesContainer.appendChild(btn);
             });
         }
 
-        // 4. POKA-YOKE EVALUATION & PENALTY ENGINE
         function evaluateChoice(btn, isCorrect) {
             if (state.isProcessingGuess || btn.disabled) return;
 
@@ -438,7 +415,6 @@
                 btn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white');
                 btn.querySelector('.status-marker').innerText = '✓';
 
-                // Lock buttons to eliminate race conditions
                 Array.from(dom.choicesContainer.children).forEach(b => b.disabled = true);
 
                 setTimeout(() => {
@@ -452,11 +428,9 @@
                 }, 320);
 
             } else {
-                // Apply Poka-Yoke +3s Stumble Penalty
                 state.accumulatedPenalty += CONFIG.PENALTY_MS;
                 playSound('wrong');
                 
-                // Audio-Visual Error Feedback
                 dom.flashOverlay.classList.add('penalty-flash');
                 dom.paperCard.classList.add('shake-animation');
                 
@@ -465,7 +439,6 @@
                     dom.paperCard.classList.remove('shake-animation');
                 }, 400);
 
-                // Lock out invalid choice for this question
                 btn.disabled = true;
                 btn.classList.remove('bg-slate-800', 'border-slate-700', 'hover:bg-slate-700');
                 btn.classList.add('bg-rose-950/80', 'border-rose-700/60', 'text-rose-300', 'cursor-not-allowed', 'opacity-60');
@@ -473,7 +446,6 @@
             }
         }
 
-        // 5. MARATHON FINISH
         function finalizeRelay() {
             clearInterval(state.timerId);
             playSound('finish');
@@ -488,26 +460,18 @@
             persistAndSyncLeaderboard(state.empId, finalPace);
         }
 
-        // 6. RESILIENT DATA TELEMETRY (WRITE BEACON + READ CSV)
+        // Resilient GET Pipeline (Eliminates broken sendBeacon POST redirects)
         function dispatchScore(emp, time) {
             const endpoint = `${CONFIG.GAS_WRITE_URL}?emp=${encodeURIComponent(emp)}&time=${encodeURIComponent(time)}&_t=${Date.now()}`;
 
-            // Priority 1: Browser-native sendBeacon
-            if (navigator.sendBeacon) {
-                const delivered = navigator.sendBeacon(endpoint);
-                if (delivered) return;
-            }
-
-            // Priority 2: Fetch with keepalive and no-cors mode
             fetch(endpoint, {
                 method: 'GET',
                 mode: 'no-cors',
                 cache: 'no-store',
                 keepalive: true
             }).catch(() => {
-                // Priority 3: Fallback Image Ping (guaranteed GET bypasses Safari/WebKit sandboxes)
-                const fallbackPing = new Image();
-                fallbackPing.src = endpoint;
+                const fallbackImg = new Image();
+                fallbackImg.src = endpoint;
             });
         }
 
@@ -515,10 +479,8 @@
             dom.lbStatus.innerText = "Recording...";
             dom.lbStatus.className = "text-[10px] font-mono font-medium text-amber-400 uppercase";
 
-            // Fire and forget write dispatch
             dispatchScore(emp, time);
 
-            // Fetch latest standings from Google Sheets CSV
             try {
                 dom.lbStatus.innerText = "Syncing...";
                 const cacheBuster = `&_t=${Date.now()}`;
@@ -541,10 +503,9 @@
                     }
                 });
 
-                // Optimistically insert current runner's score immediately
+                // Optimistically insert current record for zero-delay UI feedback
                 records.push({ emp: emp, time: parseFloat(time) });
 
-                // Deduplicate: Retain best time per unique Employee ID
                 const dedupedMap = new Map();
                 records.forEach(entry => {
                     if (!dedupedMap.has(entry.emp) || entry.time < dedupedMap.get(entry.emp)) {
@@ -552,7 +513,6 @@
                     }
                 });
 
-                // Sort ascending (fastest first) and retain Top 10
                 const leaderboard = Array.from(dedupedMap, ([emp, time]) => ({ emp, time }))
                     .sort((a, b) => a.time - b.time)
                     .slice(0, 10);
@@ -562,7 +522,6 @@
                 dom.lbStatus.className = "text-[10px] font-mono font-medium text-emerald-400 uppercase";
 
             } catch (err) {
-                console.warn("Displaying local fallback session:", err);
                 renderLeaderboardUI([{ emp: emp, time: parseFloat(time) }]);
                 dom.lbStatus.innerText = "Local Session";
                 dom.lbStatus.className = "text-[10px] font-mono font-medium text-slate-500 uppercase";
