@@ -24,18 +24,18 @@
             overscroll-behavior: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        /* Strict 8.5 x 11 Portrait Ratio Simulation */
+        /* Paper Form Simulation: Strict 8.5 x 11 Aspect Ratio */
         .paper-portrait {
             aspect-ratio: 8.5 / 11;
             background: #ffffff;
             background-image: 
-                radial-gradient(#e2e8f0 1px, transparent 1px),
+                radial-gradient(#e2e8f0 1.2px, transparent 1.2px),
                 linear-gradient(to bottom, #ffffff, #f8fafc);
-            background-size: 16px 16px, 100% 100%;
+            background-size: 14px 14px, 100% 100%;
             box-shadow: 
                 0 4px 6px -1px rgba(0, 0, 0, 0.4), 
-                0 10px 15px -3px rgba(0, 0, 0, 0.5),
-                inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+                0 10px 20px -3px rgba(0, 0, 0, 0.6),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.1);
             color: #0f172a;
         }
         .screen-container {
@@ -56,13 +56,12 @@
             40%, 60% { transform: translate3d(5px, 0, 0); }
         }
         .penalty-flash {
-            animation: redFlash 0.4s ease-out;
+            animation: redFlash 0.45s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
         @keyframes redFlash {
-            0% { background-color: rgba(239, 68, 68, 0.4); }
+            0% { background-color: rgba(239, 68, 68, 0.45); }
             100% { background-color: transparent; }
         }
-        /* Custom Scrollbar for Leaderboard */
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -82,28 +81,29 @@
     <!-- 1. ENTRY SCREEN -->
     <div id="screen-login" class="screen-container justify-center items-center p-4">
         <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center">
-            <div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center font-black text-2xl mb-3 border border-blue-500/20">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-black text-2xl mb-3 border border-blue-500/20 shadow-inner">
                 ⚡
             </div>
             <h1 class="text-2xl font-black tracking-tight text-white uppercase mb-1">Downtime Relay</h1>
-            <p class="text-xs text-slate-400 mb-6 font-medium tracking-wide uppercase">Annual Nursing Skills Fair • BCP Station</p>
+            <p class="text-xs text-slate-400 mb-6 font-semibold tracking-wide uppercase">Annual Nursing Skills Fair • BCP Marathon</p>
             
             <div class="w-full text-left mb-6">
-                <label for="emp-id" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Employee Number</label>
+                <label for="emp-id" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Employee Number</label>
                 <input 
                     type="tel" 
                     id="emp-id" 
                     maxlength="7" 
                     inputmode="numeric" 
                     pattern="[0-9]*" 
-                    placeholder="7-digit ID"
-                    class="w-full text-center text-3xl font-mono font-bold py-3 bg-slate-950 border-2 border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-white tracking-widest placeholder:text-slate-600 transition-colors"
+                    placeholder="0000000"
+                    class="w-full text-center text-3xl font-mono font-bold py-3 bg-slate-950 border-2 border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-white tracking-widest placeholder:text-slate-700 transition-colors"
                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    onkeydown="if(event.key === 'Enter') handleLogin()"
                 >
-                <p id="login-error" class="text-rose-400 text-xs mt-2 text-center font-medium hidden">Must be exactly 7 digits</p>
+                <p id="login-error" class="text-rose-400 text-xs mt-2 text-center font-semibold hidden">Must be exactly 7 numeric digits</p>
             </div>
 
-            <button onclick="handleLogin()" class="w-full py-4 bg-blue-600 active:bg-blue-700 hover:bg-blue-500 text-white font-bold rounded-xl text-lg shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2">
+            <button onclick="handleLogin()" class="w-full py-4 bg-blue-600 active:bg-blue-700 hover:bg-blue-500 text-white font-bold rounded-xl text-base shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2">
                 <span>Enter Station</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
             </button>
@@ -115,37 +115,37 @@
         <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col">
             <div class="flex items-center gap-3 border-b border-slate-800 pb-4 mb-4">
                 <div class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></div>
-                <h2 class="text-lg font-bold uppercase tracking-wider text-slate-200">Relay Briefing</h2>
+                <h2 class="text-base font-bold uppercase tracking-wider text-slate-200">Relay Briefing & Rules</h2>
             </div>
 
             <div class="space-y-3 text-sm text-slate-300 leading-relaxed mb-6 font-normal">
-                <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-lg border border-slate-800/80">
-                    <span class="text-lg">📋</span>
+                <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                    <span class="text-xl">📋</span>
                     <p><strong class="text-white">Left Screen:</strong> A physical Downtime Paper Document will appear in portrait orientation.</p>
                 </div>
-                <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-lg border border-slate-800/80">
-                    <span class="text-lg">💻</span>
+                <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                    <span class="text-xl">💻</span>
                     <p><strong class="text-white">Right Screen:</strong> Match it with the corresponding electronic EMR module being replaced.</p>
                 </div>
-                <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-lg border border-slate-800/80">
-                    <span class="text-lg">⏱️</span>
-                    <p><strong class="text-white">Poka-Yoke Lock:</strong> Incorrect choices add a <strong class="text-amber-400">+3 second penalty</strong>. You cannot proceed until the correct match is identified.</p>
+                <div class="flex items-start gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                    <span class="text-xl">⏱️</span>
+                    <p><strong class="text-white">Poka-Yoke Rule:</strong> Incorrect choices add a <strong class="text-amber-400">+3s penalty</strong>. You cannot skip or advance until the correct match is chosen.</p>
                 </div>
             </div>
 
-            <button onclick="startRelay()" class="w-full py-4 bg-emerald-600 active:bg-emerald-700 hover:bg-emerald-500 text-white font-bold rounded-xl text-lg shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
+            <button onclick="startRelay()" class="w-full py-4 bg-emerald-600 active:bg-emerald-700 hover:bg-emerald-500 text-white font-bold rounded-xl text-base shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
                 <span>Start Clock</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </button>
         </div>
     </div>
 
-    <!-- 3. MAIN GAME SCREEN (SIDE-BY-SIDE) -->
+    <!-- 3. GAMEPLAY SCREEN (SIDE-BY-SIDE) -->
     <div id="screen-game" class="screen-container p-2 sm:p-4 hidden">
-        <!-- HUD -->
+        <!-- Station HUD -->
         <header class="h-14 bg-slate-900 border border-slate-800 rounded-xl px-4 flex items-center justify-between shadow-md mb-2 shrink-0">
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">RUNNER:</span>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <span class="text-[10px] sm:text-xs font-bold tracking-widest text-slate-400 uppercase">RUNNER:</span>
                 <span id="hud-emp" class="font-mono text-xs sm:text-sm font-bold bg-slate-800 px-2.5 py-1 rounded border border-slate-700 text-blue-400">0000000</span>
             </div>
             
@@ -154,49 +154,46 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">FORM:</span>
+                <span class="text-[10px] sm:text-xs font-bold tracking-widest text-slate-400 uppercase">PROGRESS:</span>
                 <span id="progress-text" class="font-mono text-xs sm:text-sm font-bold text-white bg-slate-800 px-2 py-1 rounded border border-slate-700">1/10</span>
             </div>
         </header>
 
-        <!-- Dynamic Game Workspace: 2-Column Split -->
+        <!-- 2-Column Split Workspace -->
         <main class="flex-1 grid grid-cols-2 gap-2 sm:gap-4 overflow-hidden min-h-0">
             
-            <!-- LEFT COLUMN: Portrait Paper Document (Simulated Sheet) -->
+            <!-- LEFT COLUMN: Portrait Paper Document -->
             <section class="h-full flex flex-col items-center justify-center bg-slate-900/60 border border-slate-800 rounded-xl p-2 sm:p-4 overflow-hidden relative">
-                <div class="absolute top-2 left-3 text-[10px] uppercase font-bold text-slate-500 tracking-widest pointer-events-none">BCP Form Template</div>
+                <div class="absolute top-2 left-3 text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest pointer-events-none">BCP Document Repository</div>
                 
                 <div id="paper-card" class="paper-portrait w-full max-h-full rounded-md p-3 sm:p-5 flex flex-col justify-between select-none transition-transform">
-                    <!-- Form Top Strip -->
                     <div class="border-b-2 border-slate-800 pb-2">
-                        <div class="flex justify-between items-center text-[8px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
-                            <span>Downtime Copy • Clinical Services</span>
-                            <span class="text-rose-600 font-black">FORM-BCP-EMR</span>
+                        <div class="flex justify-between items-center text-[7px] sm:text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
+                            <span>Clinical Downtime Contingency</span>
+                            <span class="text-rose-600 font-black">FORM-BCP-AUTH</span>
                         </div>
-                        <h3 id="paper-title" class="text-xs sm:text-base md:text-lg font-black text-slate-900 leading-snug mt-1">
+                        <h3 id="paper-title" class="text-xs sm:text-sm md:text-base font-black text-slate-900 leading-snug mt-1">
                             --
                         </h3>
                     </div>
 
-                    <!-- Form Body / Clue -->
                     <div class="my-auto py-2">
-                        <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Functional Description</div>
-                        <p id="paper-clue" class="text-[11px] sm:text-sm md:text-base font-semibold text-slate-700 italic border-l-2 border-slate-300 pl-2 leading-relaxed">
+                        <div class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Functional Indicator</div>
+                        <p id="paper-clue" class="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-700 italic border-l-2 border-slate-300 pl-2 leading-relaxed">
                             --
                         </p>
                     </div>
 
-                    <!-- Form Footer Metadata -->
-                    <div class="border-t border-slate-300 pt-2 flex justify-between items-end text-[7px] sm:text-[9px] text-slate-400 font-mono">
-                        <div>RETAIN IN HARD COPY<br>ENTER POST-UPTIME</div>
-                        <div class="text-right font-bold text-slate-500">REV 2026.1</div>
+                    <div class="border-t border-slate-300 pt-2 flex justify-between items-end text-[7px] sm:text-[8px] text-slate-400 font-mono">
+                        <div>ORIGINAL HARD COPY<br>POST-UPTIME RECONCILIATION</div>
+                        <div class="text-right font-bold text-slate-500">REV. 2026.1</div>
                     </div>
                 </div>
             </section>
 
-            <!-- RIGHT COLUMN: EMR Interface Matches -->
+            <!-- RIGHT COLUMN: EMR Match Choices -->
             <section class="h-full flex flex-col justify-center bg-slate-900/60 border border-slate-800 rounded-xl p-2 sm:p-4 overflow-hidden">
-                <div class="text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-2 px-1">Select Electronic Equivalent</div>
+                <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-2 px-1">Select Electronic EMR System</div>
                 <div id="choices-container" class="flex-1 flex flex-col justify-center gap-2 sm:gap-3">
                     <!-- Buttons injected dynamically -->
                 </div>
@@ -211,16 +208,17 @@
             <!-- Runner Score Column -->
             <div class="flex-1 flex flex-col items-center justify-center bg-slate-950 p-6 rounded-xl border border-slate-800/80 text-center">
                 <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-widest rounded-full mb-3">
-                    Course Completed
+                    Marathon Finished
                 </span>
-                <h2 class="text-xl sm:text-2xl font-black text-white mb-1">Relay Time</h2>
+                <h2 class="text-xl sm:text-2xl font-black text-white mb-1">Final Relay Pace</h2>
                 
                 <div id="final-time" class="font-mono text-5xl sm:text-6xl font-black text-amber-400 my-2">00.00s</div>
-                <div id="penalty-stat" class="text-xs font-semibold text-slate-400 mb-6">Penalties: 0s</div>
+                <div id="penalty-stat" class="text-xs font-semibold text-slate-400 mb-6">Includes 0s in penalties</div>
 
                 <div class="w-full max-w-xs space-y-2">
-                    <button onclick="resetToLogin()" class="w-full py-3 bg-blue-600 active:bg-blue-700 hover:bg-blue-500 font-bold rounded-xl text-sm transition-all shadow-md">
-                        Next Associate
+                    <button onclick="resetToLogin()" class="w-full py-3.5 bg-blue-600 active:bg-blue-700 hover:bg-blue-500 font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <span>Next Associate</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>
@@ -245,7 +243,7 @@
     </div>
 
     <script>
-        // SYSTEM CONFIGURATION
+        // CORE CONFIGURATION
         const CONFIG = {
             CSV_READ_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSwX1nCx0px7lyDQr8YyzlL_55OZntbBGMbO9oHUqkQOkqiXtxgtYlxbRkjmwbUmYLep_OwNJjZ_kB/pub?output=csv',
             GAS_WRITE_URL: 'https://script.google.com/macros/s/AKfycbwfTMBq6GiZWKxI6wE5IS8Shu7jtB4shO3IWue-1DJveAmzwvKOHjYqE5FmOVlwcly2/exec',
@@ -267,6 +265,58 @@
             { paper: "Manual Discharge Clearance", clue: "Cross-department gate-check linking clinical sign-off, billing, and home instruction.", answer: "Electronic Discharge Module", distractors: ["Patient Registration", "OR Booking Queue", "Nursing Handover"] }
         ];
 
+        // PROCEDURAL AUDIO SYNTHESIZER (Zero external asset latency)
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) audioCtx = new AudioContextClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12); // E5
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.25);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'finish') {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const subOsc = audioCtx.createOscillator();
+                    const subGain = audioCtx.createGain();
+                    subOsc.connect(subGain);
+                    subGain.connect(audioCtx.destination);
+                    subOsc.type = 'triangle';
+                    subOsc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    subGain.gain.setValueAtTime(0.12, now + idx * 0.08);
+                    subGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
+                    subOsc.start(now + idx * 0.08);
+                    subOsc.stop(now + idx * 0.08 + 0.35);
+                });
+            }
+        }
+
         // ENGINE STATE
         const state = {
             empId: '',
@@ -278,7 +328,7 @@
             isProcessingGuess: false
         };
 
-        // DOM REFERENCES
+        // DOM HOOKS
         const dom = {
             screenLogin: document.getElementById('screen-login'),
             screenInstructions: document.getElementById('screen-instructions'),
@@ -316,8 +366,9 @@
             screen.classList.remove('hidden');
         }
 
-        // 1. LOGIN HANDLING
+        // 1. LOGIN HANDLER
         function handleLogin() {
+            initAudio();
             const raw = dom.empInput.value.trim();
             if (raw.length !== 7) {
                 dom.loginError.classList.remove('hidden');
@@ -331,8 +382,9 @@
             showScreen(dom.screenInstructions);
         }
 
-        // 2. GAME INITIALIZATION
+        // 2. ROUND INITIATION
         function startRelay() {
+            initAudio();
             state.activeQueue = shuffleArray(QUESTION_BANK).slice(0, CONFIG.ROUND_QUESTIONS);
             state.currentIndex = 0;
             state.accumulatedPenalty = 0;
@@ -341,7 +393,7 @@
             showScreen(dom.screenGame);
             renderCurrentQuestion();
 
-            // High Precision Runtime Clock Loop
+            // Precision Clock Loop using performance.now()
             state.startTime = performance.now();
             clearInterval(state.timerId);
             state.timerId = setInterval(() => {
@@ -351,12 +403,12 @@
             }, 30);
         }
 
-        // 3. QUESTION RENDERING
+        // 3. QUESTION INJECTION
         function renderCurrentQuestion() {
             const q = state.activeQueue[state.currentIndex];
             dom.progressText.innerText = `${state.currentIndex + 1}/${CONFIG.ROUND_QUESTIONS}`;
             
-            // Populate Paper View
+            // Update Physical Paper Card
             dom.paperTitle.innerText = q.paper;
             dom.paperClue.innerText = `"${q.clue}"`;
 
@@ -366,7 +418,7 @@
 
             choices.forEach(optionText => {
                 const btn = document.createElement('button');
-                btn.className = "w-full min-h-[44px] py-2.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700 rounded-lg text-left text-xs sm:text-sm font-bold text-slate-200 transition-colors flex items-center justify-between";
+                btn.className = "w-full min-h-[46px] py-2.5 px-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700 rounded-xl text-left text-xs sm:text-sm font-bold text-slate-200 transition-colors flex items-center justify-between shadow-sm";
                 btn.innerHTML = `<span class="truncate">${optionText}</span><span class="status-marker text-xs font-mono ml-2"></span>`;
                 
                 btn.onclick = () => evaluateChoice(btn, optionText === q.answer);
@@ -380,6 +432,8 @@
 
             if (isCorrect) {
                 state.isProcessingGuess = true;
+                playSound('correct');
+
                 btn.classList.remove('bg-slate-800', 'border-slate-700');
                 btn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white');
                 btn.querySelector('.status-marker').innerText = '✓';
@@ -395,13 +449,14 @@
                     } else {
                         renderCurrentQuestion();
                     }
-                }, 300);
+                }, 320);
 
             } else {
-                // Apply Poka-Yoke Penalty
+                // Apply Poka-Yoke +3s Stumble Penalty
                 state.accumulatedPenalty += CONFIG.PENALTY_MS;
+                playSound('wrong');
                 
-                // Audio-Visual Feedback
+                // Audio-Visual Error Feedback
                 dom.flashOverlay.classList.add('penalty-flash');
                 dom.paperCard.classList.add('shake-animation');
                 
@@ -410,7 +465,7 @@
                     dom.paperCard.classList.remove('shake-animation');
                 }, 400);
 
-                // Lock out the invalid choice permanently for this round
+                // Lock out invalid choice for this question
                 btn.disabled = true;
                 btn.classList.remove('bg-slate-800', 'border-slate-700', 'hover:bg-slate-700');
                 btn.classList.add('bg-rose-950/80', 'border-rose-700/60', 'text-rose-300', 'cursor-not-allowed', 'opacity-60');
@@ -418,9 +473,11 @@
             }
         }
 
-        // 5. TERMINATION & ASYNC DATA SYNC
+        // 5. MARATHON FINISH
         function finalizeRelay() {
             clearInterval(state.timerId);
+            playSound('finish');
+
             const totalMs = performance.now() - state.startTime + state.accumulatedPenalty;
             const finalPace = (totalMs / 1000).toFixed(2);
 
@@ -431,32 +488,45 @@
             persistAndSyncLeaderboard(state.empId, finalPace);
         }
 
-        // 6. PIPELINE: GOOGLE APPS SCRIPT WRITE + GOOGLE SHEETS CSV READ
+        // 6. RESILIENT DATA TELEMETRY (WRITE BEACON + READ CSV)
+        function dispatchScore(emp, time) {
+            const endpoint = `${CONFIG.GAS_WRITE_URL}?emp=${encodeURIComponent(emp)}&time=${encodeURIComponent(time)}&_t=${Date.now()}`;
+
+            // Priority 1: Browser-native sendBeacon
+            if (navigator.sendBeacon) {
+                const delivered = navigator.sendBeacon(endpoint);
+                if (delivered) return;
+            }
+
+            // Priority 2: Fetch with keepalive and no-cors mode
+            fetch(endpoint, {
+                method: 'GET',
+                mode: 'no-cors',
+                cache: 'no-store',
+                keepalive: true
+            }).catch(() => {
+                // Priority 3: Fallback Image Ping (guaranteed GET bypasses Safari/WebKit sandboxes)
+                const fallbackPing = new Image();
+                fallbackPing.src = endpoint;
+            });
+        }
+
         async function persistAndSyncLeaderboard(emp, time) {
             dom.lbStatus.innerText = "Recording...";
             dom.lbStatus.className = "text-[10px] font-mono font-medium text-amber-400 uppercase";
 
-            // Dispatch non-blocking write to Apps Script
-            const writeEndpoint = `${CONFIG.GAS_WRITE_URL}?emp=${encodeURIComponent(emp)}&time=${encodeURIComponent(time)}`;
-            
-            try {
-                // 'no-cors' mode ensures the write dispatches transparently past browser sandbox blocks
-                fetch(writeEndpoint, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
-            } catch (err) {
-                console.error("Write error:", err);
-            }
+            // Fire and forget write dispatch
+            dispatchScore(emp, time);
 
-            // Ingest Leaderboard CSV from Google Sheets
+            // Fetch latest standings from Google Sheets CSV
             try {
                 dom.lbStatus.innerText = "Syncing...";
-                // Timestamp bypasses aggressive HTTP proxy and CDN edge caching
                 const cacheBuster = `&_t=${Date.now()}`;
                 const response = await fetch(CONFIG.CSV_READ_URL + cacheBuster, { cache: 'no-store' });
                 
-                if (!response.ok) throw new Error("CSV endpoint failure");
+                if (!response.ok) throw new Error("CSV fetch status failed");
                 const rawCsv = await response.text();
 
-                // Robust CSV parse (emp, time)
                 const rows = rawCsv.split(/\r?\n/).slice(1);
                 const records = [];
 
@@ -471,10 +541,10 @@
                     }
                 });
 
-                // Optimistic Local Record Insertion (Guarantees immediate presence regardless of sheet write latency)
+                // Optimistically insert current runner's score immediately
                 records.push({ emp: emp, time: parseFloat(time) });
 
-                // De-duplicate: Keep fastest record per employee
+                // Deduplicate: Retain best time per unique Employee ID
                 const dedupedMap = new Map();
                 records.forEach(entry => {
                     if (!dedupedMap.has(entry.emp) || entry.time < dedupedMap.get(entry.emp)) {
@@ -482,7 +552,7 @@
                     }
                 });
 
-                // Sort ascending (fastest first) and extract Top 10
+                // Sort ascending (fastest first) and retain Top 10
                 const leaderboard = Array.from(dedupedMap, ([emp, time]) => ({ emp, time }))
                     .sort((a, b) => a.time - b.time)
                     .slice(0, 10);
@@ -492,7 +562,7 @@
                 dom.lbStatus.className = "text-[10px] font-mono font-medium text-emerald-400 uppercase";
 
             } catch (err) {
-                console.warn("Falling back to local session state:", err);
+                console.warn("Displaying local fallback session:", err);
                 renderLeaderboardUI([{ emp: emp, time: parseFloat(time) }]);
                 dom.lbStatus.innerText = "Local Session";
                 dom.lbStatus.className = "text-[10px] font-mono font-medium text-slate-500 uppercase";
@@ -507,7 +577,7 @@
                 
                 li.className = `flex justify-between items-center p-2 rounded-lg border ${
                     isCurrent 
-                        ? 'bg-blue-950/60 border-blue-500/50 text-blue-200' 
+                        ? 'bg-blue-950/60 border-blue-500/50 text-blue-200 shadow-sm' 
                         : 'bg-slate-900/60 border-slate-800 text-slate-300'
                 }`;
 
